@@ -3,9 +3,24 @@ import { BiCategory } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
 import { BsCart3, BsPerson } from "react-icons/bs";
 
+const navbarItems = [
+  {
+    icon: <BiCategory className="text-lg md:text-[25px] z-50" />,
+    label: "Category",
+  },
+  {
+    icon: <BsCart3 className="text-lg md:text-[25px] z-50" />,
+    label: "My items",
+  },
+  {
+    icon: <BsPerson className="text-lg md:text-[25px] z-50" />,
+    label: "Sign In",
+  },
+];
+
 function Navbar() {
   return (
-    <div className="w-screen h-[80px] bg-blue-500 flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8">
+    <div className="w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8">
       <div className="flex items-center">
         <div className="logo w-12 h-12 md:w-[50px] md:h-[50px] rounded-full overflow-hidden">
           <img
@@ -14,13 +29,13 @@ function Navbar() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h2 className="text-lg md:text-[30px] font-bold text-white ml-2 md:ml-4 hidden md:block">
+        <h2 className="text-lg md:text-[30px] font-bold text-[#7065F0] ml-2 md:ml-4 hidden md:block">
           DiaMart
         </h2>
       </div>
 
-      <div className="flex items-center justify-end ml-auto md:ml-0">
-        <div className="relative flex items-center">
+      <div className="flex items-center justify-center ml-auto md:ml-0">
+        <div className="relative flex items-center ml-[40px]">
           <input
             type="text"
             placeholder="Search..."
@@ -30,20 +45,15 @@ function Navbar() {
         </div>
 
         <div className="flex gap-4 ml-4 md:ml-8">
-          <div className="relative flex items-center gap-2 text-white hover:bg-blue-700 hover:p-2 md:hover:p-4 hover:rounded-[36px] transition-all">
-            <BiCategory className="text-lg md:text-[25px] text-white z-50" />
-            <h2 className="text-white font-bold hidden md:block">Category</h2>
-          </div>
-
-          <div className="relative flex items-center gap-2 text-white hover:bg-blue-700 hover:p-2 md:hover:p-4 hover:rounded-[36px] transition-all">
-            <BsCart3 className="text-lg md:text-[25px] text-white z-50" />
-            <h2 className="text-white font-bold hidden md:block">My items</h2>
-          </div>
-
-          <div className="relative flex items-center gap-2 text-white hover:bg-blue-700 hover:p-2 md:hover:p-4 hover:rounded-[36px] transition-all">
-            <BsPerson className="text-lg md:text-[25px] text-white z-50" />
-            <h2 className="text-white font-bold hidden md:block">Sign In</h2>
-          </div>
+          {navbarItems.map((item, index) => (
+            <div
+              key={index}
+              className="relative flex items-center gap-2 text-black hover:bg-[#7065F0] hover:p-2 md:hover:p-4 hover:rounded-[36px] hover:text-white transition-all cursor-pointer"
+            >
+              {item.icon}
+              <h2 className="font-bold hidden md:block">{item.label}</h2>
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import HomeCard from '../components/HomePageCard';
 
 function Home() {
   return (
-    <div className="w-[100vw] p-4">
+    <div className="w-[100vw] p-4 mt-[90px]">
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
         <HomeCard image="https://via.placeholder.com/300x150" width="100%" height="150px" />
         <HomeCard image="https://via.placeholder.com/300x200" width="100%" height="200px" />
