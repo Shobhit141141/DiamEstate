@@ -20,7 +20,7 @@ const navbarItems = [
 
 function Navbar() {
   return (
-    <div className="w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8">
+    <div className="w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8 backdrop-blur bg-white/70">
       <div className="flex items-center">
         <div className="logo w-12 h-12 md:w-[50px] md:h-[50px] rounded-full overflow-hidden">
           <img
@@ -29,7 +29,7 @@ function Navbar() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h2 className="text-lg md:text-[30px] font-bold text-[#7065F0] ml-2 md:ml-4 hidden md:block">
+        <h2 className="text-lg md:text-[30px] font-bold text-[#7065F0] ml-2 md:ml-4 hidden md:block overflow-hidden">
           DiaMart
         </h2>
       </div>
