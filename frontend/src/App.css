@@ -4,7 +4,16 @@
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
+
 }
 .main {
-  background-color: white;
+  background-color: rgb(42, 42, 41);
+  height: 100vh;
+}
+.card-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 20px;
+  padding: 20px;
+  justify-content: space-between;
 }
