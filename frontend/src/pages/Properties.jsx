@@ -85,7 +85,7 @@ const Properties = () => {
 
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="flex flex-wrap mt-[90px] p-5 rounded-md shadow-md ">
         {/* Price Range Filter */}
         <div className="w-full sm:w-[25%] mb-4 sm:mb-0 sm:mr-4">
