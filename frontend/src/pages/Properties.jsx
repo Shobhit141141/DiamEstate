@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/NavBar";
+// import Navbar from "../components/NavBar";
 import PropertyCard from "../components/PropertyCard";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 
 const dummyData = [
