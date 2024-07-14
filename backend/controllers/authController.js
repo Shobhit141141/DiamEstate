@@ -1,15 +1,25 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const {
+  Keypair,
+  TransactionBuilder,
+  Operation,
+  Networks
+} = require('diamante-base');
+const { Horizon } = require('diamante-sdk-js');
 
 const handleUserSignUp = async (req, res) => {
   try {
     const { username, location } = req.body;
 
-    // make API call to diamante to get wallet address
-    const wallet_address = '0xabc...xyz';
+    // make API call to diamante to create a new account
+    const keypair = Keypair.random();
+    const publicKey = keypair.publicKey();
+    const secret_key = keypair.secret();
+    const public_address = publicKey;
 
-    // Check whether the email is already registered
+    // Check whether the user is already registered
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exist' });
@@ -21,13 +31,17 @@ const handleUserSignUp = async (req, res) => {
     }
 
     // Create a new user
-    const newUser = new User({ username, wallet_address, location });
+    const newUser = new User({
+      username,
+      public_address,
+      secret_key,
+      location
+    });
     await newUser.save();
 
     // Generate a JWT token with payload data
-
     const token = jwt.sign(
-      { userId: newUser._id, username: newUser.username },
+      { userId: newUser._id, username: newUser.username, public_address },
       process.env.JWT_SECRET_KEY,
       { expiresIn: '1w', issuer: 'DiamEstate' }
     );
@@ -56,7 +70,11 @@ const handleUserLogin = async (req, res) => {
 
     // Generate a JWT token with payload data
     const token = jwt.sign(
-      { userId: user._id, username: user.username },
+      {
+        userId: user._id,
+        username: user.username,
+        public_address: user.public_address
+      },
       process.env.JWT_SECRET_KEY,
       { expiresIn: '1w', issuer: 'DiamEstate' }
     );

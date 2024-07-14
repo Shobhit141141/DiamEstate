@@ -1,3 +1,4 @@
+const { default: axios } = require('axios');
 const Property = require('../models/propertyModel');
 const User = require('../models/userModel');
 
@@ -77,4 +78,30 @@ const investInProperty = async (req, res) => {
   }
 };
 
-module.exports = { listProperty, getUserDetails, investInProperty };
+const fundAccountWithTestDiam = async (req, res) => {
+  try {
+    const publicKey = req.public_address;
+    console.log(`Received request to fund account ${publicKey}`);
+    const response = await axios.get(
+      `${process.env.DIAM_FAUCET_URI}?addr=${publicKey}`
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Failed to activate account ${publicKey}: ${response.statusText}`
+      );
+    }
+    const result = response.data;
+    console.log(`Account ${publicKey} activated`, result);
+    res.json({ message: `Account ${publicKey} funded successfully` });
+  } catch (error) {
+    console.error('Error in fund-account:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  listProperty,
+  getUserDetails,
+  investInProperty,
+  fundAccountWithTestDiam
+};
