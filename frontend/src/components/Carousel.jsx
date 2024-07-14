@@ -41,19 +41,19 @@ const Carousel = () => {
   ];
 
   return (
-    <div className="container mx-auto bg-slate-400 my-8">
-      <Slider {...settings}>
+    <div className="flex flex-col h-[78vh] w-[50vw] bg-gradient-to-tr from-purple-500 to-emerald-400 overflow-hidden rounded-2xl my-8">
+      <Slider {...settings} className=" overflow-y-hidden p-2" >
         {slides.map((slide) => (
           <div key={slide.id} className="relative h-[50vh] rounded-2xl ">
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-[100%] object-cover"
+              className="w-[50vw] h-[100%] overflow-y-hidden object-cover"
             />
           </div>
         ))}
       </Slider>
-      <div className=" bg-gray-800 rounded-3xl mt-4 p-4 text-white">
+      <div className="rounded-3xl m-2 p-4 text-white">
         <h2 className="text-2xl font-bold">BELL AIR MANSION</h2>
         <p className="text-lg">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit rerum
