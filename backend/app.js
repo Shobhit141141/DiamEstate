@@ -1,12 +1,17 @@
+const cors = require('cors');
 const express = require('express');
 const connectDB = require('./config/db.js');
+const authRouter = require('./routes/authRoute.js');
 const userRouter = require('./routes/userRoute.js');
 const authenticateUser = require('./middlewares/authenticateUser.js');
-const authorizeUser = require('./middlewares/authorizeUser.js');
+const { propertyRouter } = require('./routes/propertyRoute.js');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// CORS Middleware
+app.use(cors());
 
 // Function to connect to mongodb database
 connectDB();
@@ -15,23 +20,19 @@ connectDB();
 app.use(express.json());
 
 app.get('/test', (req, res) => {
-  res.status(200).json({ msg: 'Server is UP. working perfectly fine' });
+  res.status(200).json({ msg: 'Server is Up ✅' });
 });
 
-// User Routes
-app.use('/auth', userRouter);
+// Auth Routes
+app.use('/api/auth', authRouter);
 
-// Apply authentication middleware to protected routes
-app.use('/user', authenticateUser, (req, res) => {
-  // Handle protected route logic here
-});
+// User Routes - Protected
+app.use('/api/user', authenticateUser, userRouter);
 
-// Apply authorization middleware to restricted routes
-app.use('/admin', authenticateUser, authorizeUser('admin'), (req, res) => {
-  // Handle admin-only route logic here
-});
+// Property Routes - Protected
+app.use('/api/property', authenticateUser, propertyRouter);
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`🚀Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });

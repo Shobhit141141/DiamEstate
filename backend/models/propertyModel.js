@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const propertySchema = new mongoose.Schema({
 	title: { type: String, required: true },
-	description: { type: String, required: true },
+	desc: { type: String, required: true },
 	location: {
 		type: {
 			address: { type: String, required: true },
@@ -22,11 +22,11 @@ const propertySchema = new mongoose.Schema({
 			investor: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'User',
-				required: true,
 			},
-			share_per: { type: Number, required: true, default: 0 },
+			share_per: { type: Number, default: 0 },
 		},
 	],
+	listed_at: { type: Date, default: Date.now },
 });
 
 const Property = mongoose.model('Property', propertySchema);

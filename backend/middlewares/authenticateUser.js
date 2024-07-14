@@ -8,6 +8,7 @@ const authenticateUser = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     // Attach the user ID to the request object
     req.userId = decodedToken.userId;
+    req.username = decodedToken.username;
     next();
   } catch (error) {
     console.error('Error authenticating user:', error);

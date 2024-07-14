@@ -13,15 +13,16 @@ const userSchema = new mongoose.Schema({
 		required: true,
 	},
 	my_listings: [
-		{ type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
+		{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
 	],
 	my_transactions: [],
 	my_investments: [
 		{
-			type: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
-			share_per: { type: Number, required: true, default: 0 },
+			type: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
+			share_per: { type: Number, default: 0 },
 		},
 	],
+  created_at: { type: Date, default: Date.now },
 });
 
 const User = mongoose.model('User', userSchema);
