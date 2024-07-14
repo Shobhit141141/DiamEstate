@@ -7,6 +7,7 @@ const authenticateUser = (req, res, next) => {
     // Verify the token
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     // Attach the user ID to the request object
+    console.log('decodedToken:', decodedToken);
     req.userId = decodedToken.userId;
     req.username = decodedToken.username;
     next();
