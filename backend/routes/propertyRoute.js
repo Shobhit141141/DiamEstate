@@ -5,4 +5,4 @@ const propertyRouter = express.Router();
 
 propertyRouter.get('/get-all', getAllProperty);
 
-module.exports = { propertyRouter };
+module.exports = propertyRouter;

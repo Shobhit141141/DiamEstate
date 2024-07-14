@@ -4,7 +4,7 @@ const connectDB = require('./config/db.js');
 const authRouter = require('./routes/authRoute.js');
 const userRouter = require('./routes/userRoute.js');
 const authenticateUser = require('./middlewares/authenticateUser.js');
-const { propertyRouter } = require('./routes/propertyRoute.js');
+const propertyRouter = require('./routes/propertyRoute.js');
 require('dotenv').config();
 
 const app = express();
