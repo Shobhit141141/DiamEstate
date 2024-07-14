@@ -53,14 +53,38 @@ const Carousel = () => {
           </div>
         ))}
       </Slider>
-      <div className="rounded-3xl m-2 p-4 text-slate-700">
+      <div className="rounded-3xl m-2 p-4 text-slate-700  overflow-hidden h-[40vh]">
         <h2 className="text-2xl font-bold">BELL AIR MANSION</h2>
-        <p className="text-lg font-light">
+        <div className="overflow-scroll p-2 h-[30vh] ">
+        <p className="text-lg font-light h-[90%] p-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit rerum
           consequuntur enim molestias error doloremque sapiente temporibus nemo
           est explicabo, maiores accusantium at praesentium magni inventore,
-          tenetur similique asperiores unde!
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
+          deleniti architecto mollitia quia omnis ad eveniet. Quam neque sequi
+          accusantium natus ipsam itaque ea sit quidem recusandae vitae tenetur
+          assumenda, tempora magni explicabo quo hic? Quo hic voluptatum
+          similique veritatis sed porro recusandae cupiditate magni commodi
+          corporis necessitatibus, itaque, harum laboriosam dolorem aperiam
+          repellendus voluptate corrupti omnis neque facere repudiandae sint
+          optio. Commodi nostrum voluptatibus repellat hic reprehenderit sed,
+          omnis sint obcaecati, voluptate officiis esse rem id inventore quidem
+          quibusdam corrupti cupiditate unde voluptates aperiam architecto
+          ullam. Vero distinctio ullam eos ut voluptatum. Nemo odit praesentium
+          debitis voluptatibus enim nobis ex necessitatibus illo tenetur dolorum
+          quas minus unde ut perspiciatis rerum laborum quia eaque magnam
+          labore, tempore aliquid saepe, quaerat illum temporibus. Quas quae
+          dolore qui minima at accusamus repudiandae modi voluptatum unde dicta
+          quo, ullam tempore molestiae saepe commodi praesentium sequi. Eum
+          vitae ipsum eos aperiam animi ipsam, sequi iure veritatis alias dicta
+          consequatur quos voluptate pariatur porro nobis. Repudiandae aliquid
+          eos molestias iusto quasi doloremque sequi incidunt soluta temporibus!
+          Dolorem nulla natus tempora unde iusto voluptates distinctio minima
+          blanditiis perferendis aut, voluptatibus animi beatae repudiandae quia
+          expedita, ratione incidunt nobis quisquam ipsa? Illo exercitationem
+          hic amet debitis nesci ratione incidunt nobis quisquam ipsa? Illo exercitationem
         </p>
+        </div>
       </div>
     </div>
   );
