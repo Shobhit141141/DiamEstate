@@ -41,21 +41,21 @@ const Carousel = () => {
   ];
 
   return (
-    <div className="flex flex-col h-[78vh] w-[50vw] bg-gradient-to-tr from-purple-500 to-emerald-400 overflow-hidden rounded-2xl my-8">
-      <Slider {...settings} className=" overflow-y-hidden p-2" >
+    <div className="flex flex-col h-[78vh] w-full md:w-[50vw] bg-gradient-to-r from-slate-200 to-stone-300 overflow-hidden rounded-2xl ">
+      <Slider {...settings} className="overflow-y-hidden p-2">
         {slides.map((slide) => (
-          <div key={slide.id} className="relative h-[50vh] rounded-2xl ">
+          <div key={slide.id} className="relative h-[50vh] rounded-2xl">
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-[50vw] h-[100%] overflow-y-hidden object-cover"
+              className="w-full h-[100%] overflow-y-hidden object-cover"
             />
           </div>
         ))}
       </Slider>
-      <div className="rounded-3xl m-2 p-4 text-white">
+      <div className="rounded-3xl m-2 p-4 text-slate-700">
         <h2 className="text-2xl font-bold">BELL AIR MANSION</h2>
-        <p className="text-lg">
+        <p className="text-lg font-light">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit rerum
           consequuntur enim molestias error doloremque sapiente temporibus nemo
           est explicabo, maiores accusantium at praesentium magni inventore,

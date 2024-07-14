@@ -3,11 +3,11 @@ import Carousel from "../components/Carousel";
 
 const DetailsPage = () => {
   return (
-    <div className=" mt-[80px] gap-3 flex flex-wrap w-screen h-[88vh] bg-stone-200 overflow-y-hidden p-4">
-      <Carousel />
+    <div className="mt-[80px] gap-3 flex flex-wrap w-screen h-auto overflow-y-hidden p-4">
+      <Carousel className="w-full md:w-1/2" />
 
-      <div className="bg-gradient-to-r from-purple-500 to-emerald-400 my-8 w-[45vw] h-min rounded-2xl flex flex-col p-2 shadow-md">
-        <div className=" bg-slate-200 p-4 flex flex-col gap-4  rounded-2xl ">
+      <div className="bg-gradient-to-r from-slate-200 to-stone-300 w-full md:w-[45vw] h-min rounded-2xl flex flex-col p-2 shadow-md">
+        <div className="bg-white p-4 flex flex-col gap-4 rounded-2xl">
           <h3 className="text-xl font-bold text-black mb-2">
             Property Details
           </h3>
@@ -27,8 +27,8 @@ const DetailsPage = () => {
             <strong>Review:</strong> ⭐⭐⭐⭐☆
           </p>
         </div>
-        <div className="flex justify-center p-2 " >
-          <button className=" text-white font-medium text-xl md:px-4 md:py-3 bg-[#2046a0] hover:bg-[#d7d4fc] hover:p-2 md:hover:px-4 md:hover:py-3 rounded-[10px] hover:text-[#7065F0] transition-all ">
+        <div className="flex justify-center p-2">
+          <button className="text-white font-medium text-xl px-4 py-3 bg-[#7065F0] hover:bg-[#d7d4fc] hover:px-4 hover:py-3 rounded-[10px] hover:text-[#7065F0] transition-all">
             <h1>INVEST NOW</h1>
           </button>
         </div>
