@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 const navbarItems = [
   {
     // icon: <img src="/real-estate.png" className="w-[18px] md:w-[30px] z-50" />,
+    icon: <BiCategory className="text-lg md:text-[25px] z-50" />,
     label: "Buy",
   },
   {
@@ -29,7 +30,7 @@ const navbarItems = [
 
 function Navbar() {
   const location = useLocation();
-  if (location.pathname === '/login') {
+  if (location.pathname === "/login") {
     return null;
   }
 
@@ -45,7 +46,7 @@ function Navbar() {
             />
           </div>
           <h2 className="text-lg md:text-[25px] font-bold text-[#7065F0] ml-2 md:ml-4 hidden md:block overflow-hidden">
-            DiaMart
+            DiamEstate
           </h2>
         </div>
       </Link>
@@ -73,7 +74,7 @@ function Navbar() {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-center ml-2">
         <Link to={"/login"}>
           <div className="relative flex items-center gap-2 text-white md:px-4 md:py-3 bg-[#7065F0] hover:bg-[#d7d4fc] hover:p-2 md:hover:px-4 md:hover:py-3 rounded-[10px] hover:text-[#7065F0] transition-all cursor-pointer">
             <BsPerson className="text-lg md:text-[25px] z-50" />
@@ -81,14 +82,16 @@ function Navbar() {
           </div>
         </Link>
 
-        <div className="w-[50px] h-[50px] rounded-full bg-[#7065F0]">
-          <img
-            src="https://wallpapers-clan.com/wp-content/uploads/2022/08/meme-gif-pfp-18.gif"
-            alt="img"
-            srcset=""
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <Link to={"/dashboard"}>
+          <div className="w-[50px] h-[50px] rounded-full bg-[#7065F0]">
+            <img
+              src="https://wallpapers-clan.com/wp-content/uploads/2022/08/meme-gif-pfp-18.gif"
+              alt="img"
+              srcset=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </Link>
       </div>
     </div>
   );
