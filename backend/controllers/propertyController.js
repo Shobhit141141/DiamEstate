@@ -2,7 +2,9 @@ const Property = require('../models/propertyModel');
 
 const getAllProperty = async (req, res) => {
   try {
-    const property = await Property.find();
+    const property = await Property.find()
+      .populate('owner')
+      .populate('investors.investor');
     // show the latest property first
     property.sort((a, b) => b.created_at - a.created_at);
     res.status(200).json({
@@ -18,7 +20,9 @@ const getAllProperty = async (req, res) => {
 const getSingleProperty = async (req, res) => {
   try {
     const { id } = req.params;
-    const property = await Property.findById(id);
+    const property = await Property.findById(id)
+      .populate('owner')
+      .populate('investors.investor');
     if (!property) {
       return res.status(404).json({ error: 'Property not found' });
     }
