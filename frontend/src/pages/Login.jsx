@@ -22,7 +22,7 @@ function LoginPage() {
     setError(""); // Clear error if both fields are valid
 
     try {
-      const resp = await axios.post("http://localhost:4000/api/auth/login", {
+      const resp = await axios.post("https://diam-estate-server.vercel.app/api/auth/login", {
         username,
         secret_key: secretKey,
       });

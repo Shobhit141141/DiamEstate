@@ -52,7 +52,7 @@ const DetailsPage = () => {
   }, [id]);
   const handlePurachse = async (req, res) => {
     const resp = await axios.post(
-      "http://localhost:4000/api/user/make-payment",
+      "https://diam-estate-server.vercel.app/api/user/make-payment",
       {
         receiverPublicKey: localStorage.getItem("public_address"),
         amount: 50,

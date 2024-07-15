@@ -57,7 +57,7 @@ function SignUp() {
     console.log("Signing up with username:", username);
 
     try {
-      const resp = await axios.post("http://localhost:4000/api/auth/signup", {
+      const resp = await axios.post("https://diam-estate-server.vercel.app/api/auth/signup", {
         username,
         location,
       });
