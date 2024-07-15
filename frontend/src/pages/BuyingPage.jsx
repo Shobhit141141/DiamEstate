@@ -1,6 +1,30 @@
 import React, { useState } from "react";
 import Carousel from "../components/Carousel";
 
+const imageList = [
+  {
+    id: 1,
+    image:
+      "https://www.wilsonhomes.com.au/sites/default/files/styles/blog_hero_banner/public/My%20project%20-%202023-06-20T095818.329%20%281%29_0.jpg?itok=UbtVbhT0",
+    title: "Slide 1",
+    description: "This is the description for slide 1",
+  },
+  {
+    id: 2,
+    image:
+      "https://www.wilsonhomes.com.au/sites/default/files/styles/blog_hero_banner/public/My%20project%20-%202023-06-20T095818.329%20%281%29_0.jpg?itok=UbtVbhT0",
+    title: "Slide 2",
+    description: "This is the description for slide 2",
+  },
+  {
+    id: 3,
+    image:
+      "https://images.adsttc.com/media/images/6077/43aa/ebb5/fc01/6543/b86b/newsletter/fi-img-1234.jpg?1618428850",
+    title: "Slide 3",
+    description: "This is the description for slide 3",
+  },
+];
+
 const BuyingPage = () => {
   const totalPropertyPrice = 200;
   const totalTokens = 10;
@@ -19,7 +43,7 @@ const BuyingPage = () => {
 
   return (
     <div className="mt-[80px] gap-3 flex flex-wrap w-screen h-auto overflow-y-hidden p-4">
-      <Carousel className="w-full md:w-1/2" />
+      <Carousel images={imageList} numImages={3} className="w-full md:w-1/2" />
 
       <div className="bg-gradient-to-r buyingbox from-slate-200 to-stone-300 w-full md:w-[45vw] h-min rounded-2xl flex flex-col p-2 shadow-md">
         <div className="bg-white p-4 flex flex-col gap-2 rounded-2xl">
