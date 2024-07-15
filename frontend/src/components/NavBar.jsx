@@ -57,13 +57,12 @@ function Navbar() {
 		<div className='w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8 backdrop-blur'>
 			<Link to={'/'}>
 				<div className='flex items-center'>
-					<div className='logo w-12 h-12 md:w-[50px] md:h-[50px] rounded-full overflow-hidden'>
-						<img
-							src='https://en.pimg.jp/065/665/280/1/65665280.jpg'
-							alt='logo'
-							className='w-full h-full object-cover'
-						/>
-					</div>
+					<img
+						src='/dslogo.png'
+						alt='logo'
+						className='object-cover'
+						width={100}
+					/>
 					<h2 className='text-lg md:text-[25px] font-bold text-[#7065F0] ml-2 md:ml-4 hidden md:block overflow-hidden'>
 						DiamEstate
 					</h2>

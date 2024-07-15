@@ -223,7 +223,7 @@ const makePayment = async (req, res) => {
     const { receiverPublicKey, amount } = req.body;
     const user = await User.findById(req.userId);
     const senderSecret = user.secret_key;
-    const senderKeypair = Keypair.fromSecret(senderSecret);
+    const senderKeypair = DiamSdk.Keypair.fromSecret(senderSecret);
     const senderPublicKey = senderKeypair.publicKey();
     const account = await server.loadAccount(senderPublicKey);
     const transaction = new DiamSdk.TransactionBuilder(account, {
@@ -246,6 +246,11 @@ const makePayment = async (req, res) => {
       `Payment made from ${senderPublicKey} to ${receiverPublicKey} with amount ${amount}`,
       result
     );
+    user.my_investments.push({
+      property: receiverPublicKey,
+      share_per: 100
+    });
+    await user();
     res.status(200).json({
       message: `Payment of ${amount} DIAM made to ${receiverPublicKey} successfully`
     });
@@ -255,10 +260,7 @@ const makePayment = async (req, res) => {
   }
 };
 
-const sendAssetToken = async (req, res) => {
-  
-  
-} 
+const sendAssetToken = async (req, res) => {};
 
 module.exports = {
   listProperty,

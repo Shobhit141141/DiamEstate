@@ -5,7 +5,8 @@ const {
   investInProperty,
   fundAccountWithTestDiam,
   setAccountDataOnChain,
-  createTokenAssetOnChain
+  createTokenAssetOnChain,
+  makePayment
 } = require('../controllers/userController');
 const userRouter = express.Router();
 
@@ -15,6 +16,7 @@ userRouter
   .post('/invest/:propId', investInProperty)
   .get('/fund-account', fundAccountWithTestDiam)
   .post('/set-data', setAccountDataOnChain)
-  .post('/create-asset', createTokenAssetOnChain);
+  .post('/create-asset', createTokenAssetOnChain)
+  .post('/make-payment', makePayment)
 
 module.exports = userRouter;
