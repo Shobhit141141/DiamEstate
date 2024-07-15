@@ -2,7 +2,7 @@ const DiamSdk = require('diamante-sdk-js');
 const axios = require('axios');
 const User = require('../models/userModel');
 const Property = require('../models/propertyModel');
-const server = new DiamSdk.Horizon.Server(process.env.DIAM_TESTNET_URI);
+const server = new DiamSdk.Horizon.Server('https://diamtestnet.diamcircle.io');
 
 const listProperty = async (req, res) => {
   try {
