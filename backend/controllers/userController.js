@@ -71,6 +71,7 @@ const investInProperty = async (req, res) => {
     if (!property) {
       return res.status(404).json({ error: 'Property not found' });
     }
+
     // Do transaction on diam to buy asset token of property
     // on successfull transaction
     property.investors.push({ investor: req.userId, share_per });
@@ -217,9 +218,52 @@ const createTokenAssetOnChain = async (req, res) => {
   }
 };
 
+const makePayment = async (req, res) => {
+  try {
+    const { receiverPublicKey, amount } = req.body;
+    const user = await User.findById(req.userId);
+    const senderSecret = user.secret_key;
+    const senderKeypair = Keypair.fromSecret(senderSecret);
+    const senderPublicKey = senderKeypair.publicKey();
+    const account = await server.loadAccount(senderPublicKey);
+    const transaction = new DiamSdk.TransactionBuilder(account, {
+      fee: await server.fetchBaseFee(),
+      networkPassphrase: Networks.TESTNET
+    })
+      .addOperation(
+        Operation.payment({
+          destination: receiverPublicKey,
+          asset: Asset.native(),
+          amount: amount
+        })
+      )
+      .setTimeout(30)
+      .build();
+
+    transaction.sign(senderKeypair);
+    const result = await server.submitTransaction(transaction);
+    console.log(
+      `Payment made from ${senderPublicKey} to ${receiverPublicKey} with amount ${amount}`,
+      result
+    );
+    res.status(200).json({
+      message: `Payment of ${amount} DIAM made to ${receiverPublicKey} successfully`
+    });
+  } catch (error) {
+    console.error('Error in making payment:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const sendAssetToken = async (req, res) => {
+  
+  
+} 
+
 module.exports = {
   listProperty,
   getUserDetails,
+  makePayment,
   investInProperty,
   fundAccountWithTestDiam,
   setAccountDataOnChain,

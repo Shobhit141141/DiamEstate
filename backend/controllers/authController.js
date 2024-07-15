@@ -13,17 +13,18 @@ const handleUserSignUp = async (req, res) => {
   try {
     const { username, location } = req.body;
 
-    // make API call to diamante to create a new account
-    const keypair = Keypair.random();
-    const publicKey = keypair.publicKey();
-    const secret_key = keypair.secret();
-    const public_address = publicKey;
-
     // Check whether the user is already registered
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exist' });
     }
+
+    // make API call to diamante to create a new account
+    const keypair = Keypair.random();
+    const publicKey = keypair.publicKey();
+    const secret_key = keypair.secret();
+    const public_address = publicKey;
+    console.log(keypair.publicKey)
 
     // Check for valid username
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
@@ -47,11 +48,11 @@ const handleUserSignUp = async (req, res) => {
     );
 
     // Seeting userId on diamante chain for associating web2 credential with web3
-    const setDataResp = await axios.post('/api/user/set-data', {
-      name: 'userId',
-      value: newUser._id
-    });
-    console.log(setDataResp.data);
+    // const setDataResp = await axios.post('/api/user/set-data', {
+    //   name: 'userId',
+    //   value: newUser._id
+    // });
+    // console.log(setDataResp.data);
 
     res.status(201).json({
       result: newUser,
@@ -66,13 +67,17 @@ const handleUserSignUp = async (req, res) => {
 
 const handleUserLogin = async (req, res) => {
   try {
-    const { username } = req.body;
+    const { username, secret_key } = req.body;
 
     // Check if the user exists
     const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(401).json({ error: "User doesn't exist" });
+    }
+
+    if(user.secret_key !== secret_key) {
+      return res.status(401).json({ error: "Invalid secret key" });
     }
 
     // Generate a JWT token with payload data
