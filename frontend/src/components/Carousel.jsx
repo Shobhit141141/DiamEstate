@@ -2,11 +2,11 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./Carousel.css"; // Optional: for additional styling
+import "./Carousel.css"; 
 
-const Carousel = () => {
+const Carousel = ({ images, numImages }) => {
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -16,29 +16,7 @@ const Carousel = () => {
     arrows: true,
   };
 
-  const slides = [
-    {
-      id: 1,
-      image:
-        "https://www.wilsonhomes.com.au/sites/default/files/styles/blog_hero_banner/public/My%20project%20-%202023-06-20T095818.329%20%281%29_0.jpg?itok=UbtVbhT0",
-      title: "Slide 1",
-      description: "This is the description for slide 1",
-    },
-    {
-      id: 2,
-      image:
-        "https://www.wilsonhomes.com.au/sites/default/files/styles/blog_hero_banner/public/My%20project%20-%202023-06-20T095818.329%20%281%29_0.jpg?itok=UbtVbhT0",
-      title: "Slide 2",
-      description: "This is the description for slide 2",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.adsttc.com/media/images/6077/43aa/ebb5/fc01/6543/b86b/newsletter/fi-img-1234.jpg?1618428850",
-      title: "Slide 3",
-      description: "This is the description for slide 3",
-    },
-  ];
+  const slides = images.slice(0, numImages);
 
   return (
     <div className="flex flex-col h-[78vh] w-full md:w-[50vw] bg-gradient-to-r from-slate-200 to-stone-300 overflow-hidden rounded-2xl ">
@@ -54,7 +32,7 @@ const Carousel = () => {
         ))}
       </Slider>
       <div className="rounded-3xl m-2 p-4 text-slate-700  overflow-hidden h-[40vh]">
-        <h2 className="text-2xl font-bold">BELL AIR MANSION</h2>
+        <h2 className="text-2xl text-center font-bold">BELL AIR MANSION</h2>
         <div className="overflow-scroll p-2 h-[30vh] ">
         <p className="text-lg font-light h-[90%] p-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit rerum
