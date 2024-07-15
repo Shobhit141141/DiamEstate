@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const {
@@ -8,6 +7,7 @@ const {
   Networks
 } = require('diamante-base');
 const { Horizon } = require('diamante-sdk-js');
+const { default: axios } = require('axios');
 
 const handleUserSignUp = async (req, res) => {
   try {
@@ -45,6 +45,13 @@ const handleUserSignUp = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: '1w', issuer: 'DiamEstate' }
     );
+
+    // Seeting userId on diamante chain for associating web2 credential with web3
+    const setDataResp = await axios.post('/api/user/set-data', {
+      name: 'userId',
+      value: newUser._id
+    });
+    console.log(setDataResp.data);
 
     res.status(201).json({
       result: newUser,

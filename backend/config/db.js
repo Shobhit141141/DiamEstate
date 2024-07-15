@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 const connectDB = () => {
   mongoose
     .connect(`${process.env.MONGODB_URI}`, {
-      useNewUrlParser: true,
+      useNewUrlParser: true
     })
     .then(() => console.log('🔥 Connected to MongoDB'))
-    .catch((err) => console.error('💩 Failed to connect to MongoDB', err));
+    .catch(err => {
+      console.error('💩 Failed to connect to MongoDB', err);
+      process.exit(1);
+    });
 };
 module.exports = connectDB;
