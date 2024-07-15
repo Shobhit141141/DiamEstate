@@ -17,6 +17,7 @@ const propertySchema = new mongoose.Schema({
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	token_name: { type: String, required: true, unique: true },
 	no_of_tokens: { type: Number, required: true, default: 0 },
+	available_tokens: { type: Number, default: 0 },
 	investors: [
 		{
 			investor: {
@@ -26,6 +27,7 @@ const propertySchema = new mongoose.Schema({
 			share_per: { type: Number, default: 0 },
 		},
 	],
+	percentageLeft : { type: Number, default: 100 },
 	listed_at: { type: Date, default: Date.now },
 });
 

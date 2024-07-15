@@ -20,19 +20,25 @@ const getAllProperty = async (req, res) => {
 const getSingleProperty = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: 'Property ID is required' });
+    }
     const property = await Property.findById(id)
       .populate('owner')
       .populate('investors.investor');
     if (!property) {
       return res.status(404).json({ error: 'Property not found' });
     }
+
     res.status(200).json({
       result: property,
       message: 'Property fetched successfully'
     });
   } catch (error) {
     console.error('Error getting property:', error);
-    res.status(500).json({ error: error.message });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while fetching the property' });
   }
 };
 

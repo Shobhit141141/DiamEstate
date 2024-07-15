@@ -11,7 +11,7 @@ const {
 const userRouter = express.Router();
 
 userRouter
-  .post('/list-property', listProperty)
+  .post('/list-property', listProperty) 
   .get('/details', getUserDetails)
   .post('/invest/:propId', investInProperty)
   .get('/fund-account', fundAccountWithTestDiam)

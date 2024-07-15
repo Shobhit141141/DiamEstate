@@ -1,214 +1,236 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { listProperty } from "../apis/userApi";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ListingPage = () => {
-  const [listings, setListings] = useState([]);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [desc, setDesc] = useState("");
+  const [totalPrice, setTotalPrice] = useState("");
   const [images, setImages] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const [propertyPrice, setPropertyPrice] = useState("");
+  const [location, setLocation] = useState({
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+  });
   const [tokenName, setTokenName] = useState("");
-  const [numTokens, setNumTokens] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [location, setLocation] = useState("");
+  const [noOfTokens, setNoOfTokens] = useState("");
+  const navigate = useNavigate();
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
 
-  const addListing = (e) => {
-    e.preventDefault();
-    if (
-      title &&
-      description &&
-      images.length > 0 &&
-      propertyPrice > 0 &&
-      tokenName &&
-      numTokens > 0 &&
-      pincode &&
-      location
-    ) {
-      const newListing = {
-        id: Date.now(),
-        title,
-        description,
-        images: images.map((image) => URL.createObjectURL(image)),
-        propertyPrice,
-        tokenName,
-        numTokens,
-        pincode,
-        location,
-        status: "active", // This would be updated from the backend
+    Promise.all(files.map(convertFileToBase64))
+      .then((encodedImages) => setImages(encodedImages))
+      .catch((err) => console.error("Error uploading images:", err));
+  };
+
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result.toString());
       };
-      setListings([...listings, newListing]);
-      setTitle("");
-      setDescription("");
-      setImages([]);
-      setImagePreviews([]);
-      setPropertyPrice("");
-      setTokenName("");
-      setNumTokens("");
-      setPincode("");
-      setLocation("");
-    } else {
-      alert("Please fill in all fields correctly.");
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (totalPrice <= 0) {
+      toast.error("Total price must be greater than 0.");
+      return;
+    }
+  
+    if (noOfTokens <= 0) {
+      toast.error("Number of tokens must be greater than 0.");
+      return;
+    }
+  
+
+    const propertyData = {
+      title,
+      desc,
+      total_price: totalPrice,
+      images,
+      location,
+      token_name: tokenName,
+      no_of_tokens: noOfTokens,
+    };
+
+    try {
+      const response = await listProperty(propertyData);
+      if(response.status === 200) {
+        toast.success("Property listed successfully");
+        navigate("/")
+      }
+    } catch (error) {
+      toast.error(error);
+      console.error("Error listing property:", error);
     }
   };
 
-  const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setImages((prevImages) => [...prevImages, ...selectedFiles]);
-    const selectedFilePreviews = selectedFiles.map((file) =>
-      URL.createObjectURL(file)
-    );
-    setImagePreviews((prevPreviews) => [
-      ...prevPreviews,
-      ...selectedFilePreviews,
-    ]);
-  };
-
   return (
-    <div className="container h-screen text-white overflow-hidden mx-auto p-4">
-      <div className="flex flex-col items-center justify-center md:flex-row gap-8 mt-[80px] text-black bg-emerald-00 h-screen">
-        <div className="md:w-1/2 sticky top-0 bg-gradient-to-r p-2 from-slate-200 to-stone-300 rounded-3xl self-start">
-          <h2 className="text-4xl text-center font-semibold mb-4 p-2">
-            Create New Listing
-          </h2>
-          <form
-            onSubmit={addListing}
-            className="space-y-4 overflow-scroll h-[70vh] p-2 "
-          >
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium">
-                Title
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Property Name"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full px-3 bg-white text-black font-bold text-xl uppercase py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium"
-              >
-                Description
-              </label>
-              <textarea
-                id="description"
-                placeholder="Enter the description in detail ..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white text-black border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label htmlFor="images" className="block text-sm mb-1 font-medium">
-                Images
-              </label>
-              <input
-                type="file"
-                id="images"
-                multiple
-                onChange={handleImageChange}
-                className="file-input file-input-bordered image-full bg-white text-black w-full file-input-info bg-"
-              />
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {imagePreviews.map((preview, index) => (
-                  <img
-                    key={index}
-                    src={preview}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-auto object-cover rounded-md"
-                  />
-                ))}
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="propertyPrice"
-                className="block text-sm font-medium"
-              >
-                Property Price
-              </label>
-              <input
-                type="number"
-                placeholder="Enter Property Price"
-                id="propertyPrice"
-                value={propertyPrice}
-                onChange={(e) => setPropertyPrice(e.target.value)}
-                className="mt-1 block w-full px-3 bg-white text-black py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="tokenName"
-                className="block text-sm font-medium"
-              >
-                Choose Token Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Token Name"
-                id="tokenName"
-                value={tokenName}
-                onChange={(e) => setTokenName(e.target.value)}
-                className="mt-1 block w-full px-3 bg-white text-black py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="numTokens"
-                className="block text-sm font-medium"
-              >
-                No of Tokens to be Issued
-              </label>
-              <input
-                type="number"
-                placeholder="Enter Number of Tokens"
-                id="numTokens"
-                value={numTokens}
-                onChange={(e) => setNumTokens(e.target.value)}
-                className="mt-1 block w-full px-3 bg-white text-black py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="pincode"
-                className="block text-sm font-medium"
-              >
-                Pincode
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Pincode"
-                id="pincode"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value)}
-                className="mt-1 block w-full px-3 bg-white text-black py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium">
-                Location
-              </label>
-              <textarea
-                id="location"
-                placeholder="Enter Location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white text-black border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              className="text-white w-full mt-4 font-medium text-xl px-4 py-3 bg-[#7065F0] hover:bg-[#d7d4fc] hover:px-4 hover:py-3 rounded-[10px] hover:text-[#7065F0] transition-all"
-            >
-              Add Listing
-            </button>
-          </form>
+    <div className="max-w-lg mx-auto p-4 mt-[90px] bg-gray-300 rounded-[10px]">
+      <h2 className="text-2xl font-bold mb-4">List a New Property</h2>
+      <form onSubmit={handleSubmit} className="space-y-4 text-black">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Title
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm sm:text-sm "
+            required
+          />
         </div>
-      </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
+          <textarea
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Total Price
+          </label>
+          <input
+            type="number"
+            value={totalPrice}
+            onChange={(e) => setTotalPrice(e.target.value)}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+            required
+            min="1"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Images
+          </label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mt-1 block w-full  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+            <div className="mt-2 grid grid-cols-3 gap-2">
+            {images.map((image, index) => (
+              <img key={index} src={image} alt={`preview ${index}`} className="w-full h-auto rounded-lg" />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Address
+          </label>
+          <input
+            type="text"
+            value={location.address}
+            onChange={(e) =>
+              setLocation({ ...location, address: e.target.value })
+            }
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            City
+          </label>
+          <input
+            type="text"
+            value={location.city}
+            onChange={(e) => setLocation({ ...location, city: e.target.value })}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            State
+          </label>
+          <input
+            type="text"
+            value={location.state}
+            onChange={(e) =>
+              setLocation({ ...location, state: e.target.value })
+            }
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Country
+          </label>
+          <input
+            type="text"
+            value={location.country}
+            onChange={(e) =>
+              setLocation({ ...location, country: e.target.value })
+            }
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Token Name
+          </label>
+          <input
+            type="text"
+            value={tokenName}
+            onChange={(e) => setTokenName(e.target.value)}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Number of Tokens
+          </label>
+          <input
+            type="number"
+            value={noOfTokens}
+            onChange={(e) => {
+              const value = Math.max(0, Number(e.target.value));
+              setNoOfTokens(value);
+            }}
+            className="mt-1 block w-full h-[35px] bg-white rounded-md px-2 border-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+            required
+            min={1}
+          />
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            List Property
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

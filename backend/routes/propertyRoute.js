@@ -8,8 +8,8 @@ const {
 const propertyRouter = express.Router();
 
 propertyRouter
-  .get('/get-all', getAllProperty)
+  .get('/get-all', getAllProperty) // ✅
   .get('/search', searchProperty)
-  .get('/get/:id', getSingleProperty);
+  .get('/get/:id', getSingleProperty); // ✅
 
 module.exports = propertyRouter;

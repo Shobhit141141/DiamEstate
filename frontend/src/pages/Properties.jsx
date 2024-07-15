@@ -1,92 +1,67 @@
 import { useEffect, useState } from "react";
-// import Navbar from "../components/NavBar";
 import PropertyCard from "../components/PropertyCard";
-// import { Link } from "react-router-dom";
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
-
-const dummyData = [
-  {
-    _id: "1",
-    name: "Luxury Villa",
-    price: "$500,000",
-    image:
-      "https://www.investopedia.com/thmb/bfHtdFUQrl7jJ_z-utfh8w1TMNA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/houses_and_land-5bfc3326c9e77c0051812eb3.jpg",
-    percentageLeft: "80",
-  },
-  {
-    _id: "2",
-    name: "Modern Apartment",
-    price: "$300,000",
-    image:
-      "https://www.investopedia.com/thmb/bfHtdFUQrl7jJ_z-utfh8w1TMNA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/houses_and_land-5bfc3326c9e77c0051812eb3.jpg",
-    percentageLeft: "60",
-  },
-  {
-    _id: "3",
-    name: "Cozy Cottage",
-    price: "$150,000",
-    image:
-      "https://www.investopedia.com/thmb/bfHtdFUQrl7jJ_z-utfh8w1TMNA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/houses_and_land-5bfc3326c9e77c0051812eb3.jpg",
-    percentageLeft: "90",
-  },
-];
+import { getAllProperty } from "../apis/propertyApi";
 
 const Properties = () => {
-  const [productList, setProductList] = useState(dummyData);
+  const [propertyList, setPropertyList] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
   const [percentageRange, setPercentageRange] = useState({ min: 0, max: 100 });
   const [sortBy, setSortBy] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const filteredProducts = dummyData.filter(
+    const getAllProperties = async () => {
+      try {
+        const response = await getAllProperty();
+        setPropertyList(response.data.result);
+        setFilteredProducts(response.data.result);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    };
+    getAllProperties();
+  }, []);
+
+  useEffect(() => {
+    const filteredByPrice = propertyList.filter(
       (item) =>
-        parseFloat(item.price.replace("$", "").replace(",", "")) >=
-          priceRange.min &&
-        parseFloat(item.price.replace("$", "").replace(",", "")) <=
-          priceRange.max
+        parseFloat(item.total_price) >= priceRange.min &&
+        parseFloat(item.total_price) <= priceRange.max
     );
 
-    const filteredByPercentage = filteredProducts.filter(
-      (item) =>
-        parseInt(item.percentageLeft) >= percentageRange.min &&
-        parseInt(item.percentageLeft) <= percentageRange.max
-    );
+    const filteredByPercentage = filteredByPrice.filter((item) => {
+      return (
+        item.percentageLeft >= percentageRange.min &&
+        item.percentageLeft <= percentageRange.max
+      );
+    });
 
     const sortedProducts = filteredByPercentage.sort((a, b) => {
       if (sortBy === "priceAsc") {
-        return (
-          parseFloat(a.price.replace("$", "").replace(",", "")) -
-          parseFloat(b.price.replace("$", "").replace(",", ""))
-        );
+        return a.total_price - b.total_price;
       } else if (sortBy === "priceDesc") {
-        return (
-          parseFloat(b.price.replace("$", "").replace(",", "")) -
-          parseFloat(a.price.replace("$", "").replace(",", ""))
-        );
+        return b.total_price - a.total_price;
       }
       return 0;
     });
 
     const filteredBySearch = sortedProducts.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    setProductList(filteredBySearch);
-  }, [priceRange, percentageRange, sortBy, searchTerm]);
+    setFilteredProducts(filteredBySearch);
+  }, [propertyList, priceRange, percentageRange, sortBy, searchTerm]);
 
   const handleSortChange = () => {
-    if (sortBy === "priceAsc") {
-      setSortBy("priceDesc");
-    } else {
-      setSortBy("priceAsc");
-    }
+    setSortBy((prev) => (prev === "priceAsc" ? "priceDesc" : "priceAsc"));
   };
+
 
   return (
     <div>
-      {/* <Navbar /> */}
-      <div className="flex flex-wrap mt-[90px] p-5 rounded-md shadow-md ">
+      <div className="flex flex-wrap mt-[90px] p-5 rounded-md shadow-md">
         {/* Price Range Filter */}
         <div className="w-full sm:w-[25%] mb-4 sm:mb-0 sm:mr-4">
           <label className="block mb-2">Price Range:</label>
@@ -130,7 +105,7 @@ const Properties = () => {
 
         {/* Sorting Button */}
         <div className="w-full sm:w-[15%] mb-4 sm:mb-0">
-          <label className="block mb-2">Sort </label>
+          <label className="block mb-2">Sort</label>
           <div className="flex items-center">
             <button
               onClick={handleSortChange}
@@ -143,7 +118,7 @@ const Properties = () => {
                 </p>
               ) : (
                 <p className="flex gap-1 justify-center items-center">
-                  <RiArrowDownSLine className="text-red-500  text-[20px] font-bold" />
+                  <RiArrowDownSLine className="text-red-500 text-[20px] font-bold" />
                   <p>Des</p>
                 </p>
               )}
@@ -165,9 +140,13 @@ const Properties = () => {
       </div>
 
       <div className="card-section justify-center sm:justify-between px-5 mt-5">
-        {productList.map((item) => (
-          <PropertyCard key={item._id} product={item} />
-        ))}
+        {filteredProducts.length === 0 ? (
+          <p>No properties found.</p>
+        ) : (
+          filteredProducts.map((property) => (
+            <PropertyCard key={property._id} property={{ ...property }} />
+          ))
+        )}
       </div>
     </div>
   );

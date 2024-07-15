@@ -1,20 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyInvestment from "../components/MyInvestment";
 import Transaction from "../components/MyTransaction";
 import Listings from "../components/MyListings";
+import { getUserDetails } from "../apis/userApi";
 
 function DashBoard() {
   const [activeTab, setActiveTab] = useState("My Investments");
-
+  const [user, setUser] = useState([]);
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await getUserDetails();
+        setUser(response.data.result);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+  
+    getUser();
+  }, []);
+
+  
 
   return (
     <div className="mt-[90px] p-6">
       <h1 className="text-2xl font-bold mb-4 text-[#7065F0]">
         <p className="text-black">
-          Hello , <span className="text-[#7065F0]">Manav</span> from London , UK
+        Hello, <span className="text-[#7065F0]">{user.username || "Guest"}</span>
+        {user?.location ? ` from ${user.location.city}, ${user.location.country}` : ""}
         </p>
         {/* Welcome to Dashboard , Keep the track of your Estate */}
       </h1>
@@ -55,16 +72,16 @@ function DashBoard() {
           <div className="flex flex-col gap-2">
             <MyInvestment
               src={
-                "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+                "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg"
               }
-              propertyName="Property One"
+              propertyName="Modern Residents"
               propertyAddress="123 Main St, Springfield"
             />
 
             <MyInvestment
-              src={"https://pixlr.com/images/index/ai-image-generator-one.webp"}
-              propertyName="Property One"
-              propertyAddress="123 Main St, Springfield"
+              src={"https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?cs=srgb&dl=pexels-jessica-bryant-592135-1370704.jpg&fm=jpg"}
+              propertyName="La Villa"
+              propertyAddress="223 Main St, Washington DC"
             />
           </div>
         )}
@@ -73,10 +90,10 @@ function DashBoard() {
           <div>
             <Listings
               src={
-                "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+                "https://www.adanirealty.com/-/media/Project/Realty/Blogs/Types-Of-Residential-Properties.png"
               }
-              propertyName="Property One"
-              propertyAddress="123 Main St, Springfield"
+              propertyName="Raj Residency"
+              propertyAddress="122 street , NYC"
               percentageLeft={80}
             />
           </div>
@@ -85,17 +102,17 @@ function DashBoard() {
           <div className="flex flex-col gap-2">
             <Transaction
               src={
-                "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+                "https://www.tricityinfra.com/wp-content/uploads/2024/04/Real-estate.jpg"
               }
-              propertyName="Property One"
+              propertyName="Home stay"
               propertyAddress="123 Main St, Springfield"
               amount="100,000"
               transactionType="credit"
               tokens="500"
             />
             <Transaction
-              src={"https://pixlr.com/images/index/ai-image-generator-one.webp"}
-              propertyName="Property Two"
+              src={"https://www.fausettlaw.com/wp-content/uploads/real-estate-vs.-real-property-1200x630.jpg"}
+              propertyName="Luxury Apt."
               propertyAddress="456 Elm St, Shelbyville"
               amount="50,000"
               transactionType="debit"
