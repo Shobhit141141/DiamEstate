@@ -2,9 +2,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const {
   Keypair,
-  TransactionBuilder,
-  Operation,
-  Networks
 } = require('diamante-base');
 const { Horizon } = require('diamante-sdk-js');
 const { default: axios } = require('axios');
