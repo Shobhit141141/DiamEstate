@@ -14,11 +14,11 @@ function LoginPage() {
     if (username.trim() === "") {
       setError("Required Field");
       return; // Early return to prevent further execution
-    } 
+    }
     if (secretKey.trim() === "") {
       setError("Required Field");
       return; // Early return to prevent further execution
-    } 
+    }
     setError(""); // Clear error if both fields are valid
 
     try {
@@ -29,6 +29,7 @@ function LoginPage() {
       localStorage.setItem("access_token", resp.data.access_token);
       localStorage.setItem("public_address", resp.data.result.public_address);
       navigate("/");
+	  toast.success("Welcome to DiamEstate 🎉")
     } catch (error) {
       console.error(error);
       setError("Login failed. Please try again."); // Set error for failed login
@@ -81,10 +82,15 @@ function LoginPage() {
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
-          
+
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
-          <p>Not a user? <Link to="/signup"><span className="text-indigo-700">Sign Up</span></Link></p>
+          <p>
+            Not a user?{" "}
+            <Link to="/signup">
+              <span className="text-indigo-700">Sign Up</span>
+            </Link>
+          </p>
           <button
             type="submit"
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 my-4"

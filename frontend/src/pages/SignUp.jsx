@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiCopy } from "react-icons/bi";
+import toast from "react-hot-toast";
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -64,6 +65,7 @@ function SignUp() {
       localStorage.setItem("access_token", resp.data.access_token);
       localStorage.setItem("public_address", resp.data.result.public_address);
       setShowSecretKey(true);
+	  toast.success("Welcome to DiamEstate 🎉")
       console.log(resp.data);
     } catch (error) {
       console.log(error);
@@ -80,7 +82,12 @@ function SignUp() {
             <BiCopy
               onClick={() => {
                 navigator.clipboard.writeText(secretKey);
-                alert("Copied to clipboard!");
+				toast("Copied to clipboard!",{
+					style: {
+					  background: '#7065F0',
+					  color: 'white',
+					},
+				  })
               }}
               className="cursor-pointer"
               size={27}
@@ -92,7 +99,7 @@ function SignUp() {
           </p>
           <p>❌ Don't share it with anyone!</p>
           <div className="mx-auto text-right my-2">
-            <button onClick={() => navigate("/")} className="btn btn-primary">
+            <button onClick={() => {navigate("/"); toast.success("Welcome to DiamEstate 🎉")}} className="btn btn-primary">
               Okay
             </button>
           </div>
@@ -183,6 +190,7 @@ function SignUp() {
           >
             Sign Up
           </button>
+          <p className="text-black">Already a user? <Link to="/login"><span className="text-indigo-700">Log In</span></Link></p>
         </form>
       </div>
     </div>

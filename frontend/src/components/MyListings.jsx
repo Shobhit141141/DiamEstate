@@ -22,13 +22,13 @@ function Listings({ src, propertyName, propertyAddress, percentageLeft }) {
         <div
           className="radial-progress text-[#43d854] w-[150px] h-[150px] font-bold"
           style={{
-            "--value": `${percentageLeft}`,
+            "--value": `${Math.floor(percentageLeft)}`,
             "--size": "12rem",
             "--thickness": "6px",
           }}
           role="progressbar"
         >
-          {percentageLeft}
+          {percentageLeft.toFixed(0)}
         </div>
       </div>
     </div>

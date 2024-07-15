@@ -5,7 +5,6 @@ const getAllProperty = async (req, res) => {
     const property = await Property.find()
       .populate('owner')
       .populate('investors.investor');
-    // show the latest property first
     property.sort((a, b) => b.created_at - a.created_at);
     res.status(200).json({
       result: property,

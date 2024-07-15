@@ -11,6 +11,7 @@ import DashBoard from "./pages/DashBoard";
 import {Toaster} from "react-hot-toast";
 import SignUp from './pages/SignUp';
 function App() {
+ 
   return (
     <>
       

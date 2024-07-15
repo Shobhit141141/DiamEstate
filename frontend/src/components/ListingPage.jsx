@@ -74,7 +74,7 @@ const ListingPage = () => {
 
   return (
     <div className="max-w-lg mx-auto p-4 mt-[90px] bg-gray-300 rounded-[10px]">
-      <h2 className="text-2xl font-bold mb-4">List a New Property</h2>
+      <h2 className="text-2xl font-bold mb-4 text-black">List a New Property</h2>
       <form onSubmit={handleSubmit} className="space-y-4 text-black">
         <div>
           <label className="block text-sm font-medium text-gray-700">

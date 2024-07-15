@@ -15,11 +15,13 @@ const userSchema = new mongoose.Schema({
   },
   secret_key: { type: String, required: true },
   distribution_secret_key: { type: String },
-  my_listings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
+  my_listings: [
+    { property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' } }
+  ],
   my_transactions: [],
   my_investments: [
     {
-      type: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
+      property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
       share_per: { type: Number, default: 0 }
     }
   ],

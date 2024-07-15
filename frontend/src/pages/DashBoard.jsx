@@ -3,10 +3,12 @@ import MyInvestment from "../components/MyInvestment";
 import Transaction from "../components/MyTransaction";
 import Listings from "../components/MyListings";
 import { getUserDetails } from "../apis/userApi";
+import { Link } from "react-router-dom";
 
 function DashBoard() {
   const [activeTab, setActiveTab] = useState("My Investments");
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(true);
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -14,24 +16,30 @@ function DashBoard() {
   useEffect(() => {
     const getUser = async () => {
       try {
+        setLoading(true);
         const response = await getUserDetails();
         setUser(response.data.result);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching user details:", error);
+        setLoading(false);
       }
     };
-  
+
     getUser();
   }, []);
-
-  
-
+  if (loading) {
+    return <p>Loading...</p>;
+  }
   return (
     <div className="mt-[90px] p-6">
       <h1 className="text-2xl font-bold mb-4 text-[#7065F0]">
         <p className="text-black">
-        Hello, <span className="text-[#7065F0]">{user.username || "Guest"}</span>
-        {user?.location ? ` from ${user.location.city}, ${user.location.country}` : ""}
+          Hello,{" "}
+          <span className="text-[#7065F0]">{user.username || "Guest"}</span>
+          {user?.location
+            ? ` from ${user.location.city}, ${user.location.country}`
+            : ""}
         </p>
         {/* Welcome to Dashboard , Keep the track of your Estate */}
       </h1>
@@ -70,7 +78,7 @@ function DashBoard() {
       <div className="mt-4">
         {activeTab === "My Investments" && (
           <div className="flex flex-col gap-2">
-            <MyInvestment
+            {/* <MyInvestment
               src={
                 "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg"
               }
@@ -79,23 +87,49 @@ function DashBoard() {
             />
 
             <MyInvestment
-              src={"https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?cs=srgb&dl=pexels-jessica-bryant-592135-1370704.jpg&fm=jpg"}
+              src={
+                "https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?cs=srgb&dl=pexels-jessica-bryant-592135-1370704.jpg&fm=jpg"
+              }
               propertyName="La Villa"
               propertyAddress="223 Main St, Washington DC"
-            />
+            /> */}
+            {user.my_investments.map((investment) => (
+              <Link to={`/details/${investment.property._id}`}>
+                <MyInvestment
+                  key={investment.property._id}
+                  src={investment.property.images[0]}
+                  propertyName={investment.property.title}
+                  propertyAddress={investment.property.location.address}
+                  share_per={investment.share_per}
+                  total_price={investment.property.total_price}
+                />
+              </Link>
+            ))}
           </div>
         )}
 
         {activeTab === "My Listings" && (
-          <div>
-            <Listings
+          <div className="flex flex-col gap-2">
+            {/* <Listings
               src={
                 "https://www.adanirealty.com/-/media/Project/Realty/Blogs/Types-Of-Residential-Properties.png"
               }
               propertyName="Raj Residency"
               propertyAddress="122 street , NYC"
               percentageLeft={80}
-            />
+            /> */}
+            {user.my_listings.map((investment) => (
+              <Link to={`/details/${investment.property._id}`}>
+                <Listings
+                  key={investment.property._id}
+                  src={investment.property.images[0]}
+                  propertyName={investment.property.title}
+                  propertyAddress={investment.property.location.address}
+                  percentageLeft={investment.property.percentageLeft}
+                  total_price={investment.property.total_price}
+                />
+              </Link>
+            ))}
           </div>
         )}
         {activeTab === "My Transaction" && (
@@ -111,7 +145,9 @@ function DashBoard() {
               tokens="500"
             />
             <Transaction
-              src={"https://www.fausettlaw.com/wp-content/uploads/real-estate-vs.-real-property-1200x630.jpg"}
+              src={
+                "https://www.fausettlaw.com/wp-content/uploads/real-estate-vs.-real-property-1200x630.jpg"
+              }
               propertyName="Luxury Apt."
               propertyAddress="456 Elm St, Shelbyville"
               amount="50,000"

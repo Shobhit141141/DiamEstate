@@ -20,15 +20,15 @@ function PropertyCard({ property }) {
           </div>
           <div className="w-[30%] flex justify-center">
             <div
-              className="radial-progress text-[#1e7127] w-[50px] h-[50px] font-bold"
+              className="radial-progress text-[#399e45] w-[50px] h-[50px] font-bold"
               style={{
-                "--value": `${property.percentageLeft}`,
+                "--value": `${Math.floor(property.percentageLeft)}`,
                 "--size": "12rem",
                 "--thickness": "4px",
               }}
               role="progressbar"
             >
-              {property.percentageLeft}
+              {Math.floor(property.percentageLeft)}
             </div>
           </div>
         </div>

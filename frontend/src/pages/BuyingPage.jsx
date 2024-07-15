@@ -45,7 +45,7 @@ const BuyingPage = () => {
     }
 
     try {
-      const tokens_left = totalTokens - tokenCount;
+      const tokens_left = property.no_of_tokens - tokenCount;
       console.log(tokens_left)
       await investInProperty(id, percentage , tokens_left);
       toast.success("💰 Invested successfully");
@@ -93,7 +93,7 @@ const BuyingPage = () => {
             <strong>Tokens Left:</strong> {property.available_tokens}
           </p>
           <p className="text-gray-700">
-            <strong>Tokens Left After Transaction:</strong> {property.no_of_tokens - tokenCount}
+            <strong>Tokens Left After Transaction:</strong> {property.available_tokens - tokenCount}
           </p>
         </div>
         <div className="flex flex-col pt-3 px-1 gap-1">

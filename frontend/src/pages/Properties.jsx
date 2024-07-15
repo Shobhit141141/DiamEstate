@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PropertyCard from "../components/PropertyCard";
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { getAllProperty } from "../apis/propertyApi";
+import { useNavigate } from "react-router-dom";
 
 const Properties = () => {
   const [propertyList, setPropertyList] = useState([]);
@@ -10,10 +11,14 @@ const Properties = () => {
   const [percentageRange, setPercentageRange] = useState({ min: 0, max: 100 });
   const [sortBy, setSortBy] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const navigate = useNavigate()
   useEffect(() => {
     const getAllProperties = async () => {
       try {
+        if(!localStorage.getItem("access_token")){
+          navigate("/login");
+          return;
+        }
         const response = await getAllProperty();
         setPropertyList(response.data.result);
         setFilteredProducts(response.data.result);
@@ -61,7 +66,7 @@ const Properties = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap mt-[90px] p-5 rounded-md shadow-md">
+      <div className="flex flex-wrap mt-[90px] p-5 rounded-md shadow-md text-black">
         {/* Price Range Filter */}
         <div className="w-full sm:w-[25%] mb-4 sm:mb-0 sm:mr-4">
           <label className="block mb-2">Price Range:</label>
@@ -114,12 +119,12 @@ const Properties = () => {
               {sortBy === "priceAsc" ? (
                 <p className="flex gap-1 justify-center items-center">
                   <RiArrowUpSLine className="text-green-500 text-[20px] font-bold" />
-                  <p>Asc</p>
+                  <p className="text-white">Asc</p>
                 </p>
               ) : (
                 <p className="flex gap-1 justify-center items-center">
                   <RiArrowDownSLine className="text-red-500 text-[20px] font-bold" />
-                  <p>Des</p>
+                  <p className="text-white">Des</p>
                 </p>
               )}
             </button>
@@ -134,7 +139,7 @@ const Properties = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-white"
           />
         </div>
       </div>

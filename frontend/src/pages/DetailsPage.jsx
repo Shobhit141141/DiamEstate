@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { getSingleProperty } from "../apis/propertyApi";
 import { Link, useParams } from "react-router-dom";
+import InvestorTable from "../components/InvestorsTable";
 
 const imageList = [
   {
@@ -116,6 +117,8 @@ const DetailsPage = () => {
             <h1>BUY 100% (in DIAM)</h1>
           </button>
         </div>
+
+		<InvestorTable investors={property.investors}/>
       </div>
     </div>
   );

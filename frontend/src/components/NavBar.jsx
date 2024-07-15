@@ -5,6 +5,7 @@ import { BsHouseDash } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { RiAccountPinCircleLine } from "react-icons/ri";
 import { Horizon } from "diamante-sdk-js";
+import toast from "react-hot-toast";
 
 const navbarItems = [
   {
@@ -33,7 +34,7 @@ function Navbar() {
   const fetchDiamBalance = async () => {
     try {
       const response = await server.loadAccount(
-        "GDLTWSQEYSFSJNJJ35ZVCWT7DIMED2C56HRSUGR3CKT4UPD45CPUZBZ7"
+        localStorage.getItem("public_address")
       );
       setBalance(response.balances[0].balance);
     } catch (error) {
@@ -45,7 +46,7 @@ function Navbar() {
     fetchDiamBalance();
   }, []);
 
-  if (location.pathname === "/login") {
+  if (location.pathname === "/login" || location.pathname === "/signup") {
     return null;
   }
 
@@ -59,7 +60,7 @@ function Navbar() {
   };
 
   return (
-    <div className="w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8 backdrop-blur">
+    <div className="w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8 backdrop-blur z-50">
       <Link to="/">
         <div className="flex items-center">
           <img src="/dslogo.png" alt="logo" className="object-cover" width={100} />
@@ -96,7 +97,12 @@ function Navbar() {
           <div
             onClick={() => {
               navigator.clipboard.writeText(publicAddress);
-              alert("Copied to clipboard!");
+              toast("Copied to clipboard!",{
+				style: {
+				  background: '#7065F0',
+				  color: 'white',
+				},
+			  });
             }}
             className="cursor-pointer border-1 bg-gray-300 rounded-full p-2"
           >
@@ -109,11 +115,18 @@ function Navbar() {
           <p>{Number.parseInt(balance)} DIAMS</p>
         </div>
       </div>
+	  <div className="flex gap-3 items-center ml-2">
+        {/* <Link onClick={() => localStorage.clear()} to="/login"> */}
+          <div className="relative flex items-center gap-2 text-white md:px-4 md:py-3 bg-green-500 hover:bg-green-700 hover:p-2 md:hover:px-4 md:hover:py-3 rounded-[10px] transition-all cursor-pointer">
+            <h2 className="font-bold hidden md:block">💰 Fund</h2>
+          </div>
+        {/* </Link> */}
+      </div>
 
       <div className="flex gap-3 items-center ml-2">
         <Link onClick={() => localStorage.clear()} to="/login">
           <div className="relative flex items-center gap-2 text-white md:px-4 md:py-3 bg-[#7065F0] hover:bg-[#d7d4fc] hover:p-2 md:hover:px-4 md:hover:py-3 rounded-[10px] hover:text-[#7065F0] transition-all cursor-pointer">
-            <FiLogOut className="text-lg md:text-[25px] z-50" />
+            <FiLogOut className="text-[16px] md:text-[25px] z-50" />
             <h2 className="font-bold hidden md:block">Logout</h2>
           </div>
         </Link>

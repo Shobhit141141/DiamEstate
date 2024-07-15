@@ -10,28 +10,12 @@ const listProperty = async (req, res) => {
       title,
       desc,
       total_price,
-      images, // Expecting base64 encoded images
+      images,
       token_name,
       no_of_tokens,
       location
     } = req.body;
-
-    // const location = {
-    //   address,
-    //   city,
-    //   state,
-    //   country
-    // };
-
-    // Log the input for debugging
-    console.log(
-      title,
-      desc,
-      total_price,
-      location,
-      token_name,
-      no_of_tokens
-    );
+    console.log(title, desc, total_price, location, token_name, no_of_tokens);
 
     // Create a token asset using diamante API
     // const newAssetResp = await axios.post('/api/user/create-asset', {
@@ -40,8 +24,6 @@ const listProperty = async (req, res) => {
     // });
 
     const owner = req.userId;
-
-    // Create a property
     const property = new Property({
       title,
       desc,
@@ -51,7 +33,7 @@ const listProperty = async (req, res) => {
       owner,
       token_name,
       no_of_tokens,
-      available_tokens:no_of_tokens,
+      available_tokens: no_of_tokens
     });
 
     if (property.investors.length > 0) {
@@ -61,7 +43,11 @@ const listProperty = async (req, res) => {
       );
       property.percentageLeft = 100 - totalPercentageShared;
     }
-    await property.save();
+    const savedProperty = await property.save();
+
+    const user = await User.findById(req.userId);
+    user.my_listings.push({ property: savedProperty._id });
+    await user.save();
 
     res
       .status(200)
@@ -75,8 +61,14 @@ const listProperty = async (req, res) => {
 const getUserDetails = async (req, res) => {
   try {
     const user = await User.findById(req.userId)
-      .populate('my_investments')
-      .populate('my_listings');
+      .populate({
+        path: 'my_investments.property',
+        model: 'Property'
+      })
+      .populate({
+        path: 'my_listings.property',
+        model: 'Property'
+      })
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -93,22 +85,24 @@ const getUserDetails = async (req, res) => {
 const investInProperty = async (req, res) => {
   try {
     const { propId } = req.params;
-    const { share_per,tokens_left } = req.body;
-    console.log(tokens_left)
+    const { share_per, tokens_left } = req.body;
+    console.log(tokens_left);
     console.log(propId, share_per);
     const property = await Property.findById(propId);
     if (!property) {
       return res.status(404).json({ error: 'Property not found' });
     }
     if (property.percentageLeft - share_per < 0) {
-      return res.status(400).json({ error: 'Investment exceeds available percentage.' });
+      return res
+        .status(400)
+        .json({ error: 'Investment exceeds available percentage.' });
     }
     property.investors.push({ investor: req.userId, share_per });
     property.percentageLeft -= share_per;
+    property.available_tokens = tokens_left;
     await property.save();
     const user = await User.findById(req.userId);
     user.my_investments.push({ property: propId, share_per });
-    property.available_tokens=tokens_left;
     await user.save();
 
     res.status(200).json({
