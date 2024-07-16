@@ -68,7 +68,7 @@ const getUserDetails = async (req, res) => {
       .populate({
         path: 'my_listings.property',
         model: 'Property'
-      })
+      });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -136,32 +136,27 @@ const setAccountDataOnChain = async (req, res) => {
     const { name, value } = req.body;
     const user = await User.findById(req.userId);
     const sourceKeys = DiamSdk.Keypair.fromSecret(user.secret_key);
-    server
-      .loadAccount(sourceKeys.publicKey())
-      .then(function (sourceAccount) {
-        transaction = new DiamSdk.TransactionBuilder(sourceAccount, {
-          fee: DiamSdk.BASE_FEE,
-          networkPassphrase: 'Diamante Testnet'
+    const senderPublicKey = sourceKeys.publicKey();
+    const account = await server.loadAccount(senderPublicKey);
+    const transaction = new DiamSdk.TransactionBuilder(account, {
+      fee: await server.fetchBaseFee(),
+      networkPassphrase: DiamSdk.Networks.TESTNET
+    })
+      .addOperation(
+        DiamSdk.Operation.manageData({
+          name,
+          value: value || null
         })
-          .addOperation(
-            DiamSdk.Operation.manageData({
-              name,
-              value
-            })
-          )
-          .setTimeout(0)
-          .build();
-        // Signing the transaction
-        transaction.sign(sourceKeys);
-        return server.submitTransaction(transaction);
-      })
-      .then(function (result) {
-        return res.status(200).json({ message: 'Data set successfully' });
-      })
-      .catch(function (error) {
-        return res.status(500).json({ error: error.message });
-      });
-    return server.submitTransaction(transaction);
+      )
+      .setTimeout(30)
+      .build();
+    transaction.sign(sourceKeys);
+    const result = await server.submitTransaction(transaction);
+    await server.submitTransaction(transaction);
+    // return res.status(200).json({
+    //   result,
+    //   message: `Data ${name} set to ${value} successfully`
+    // });
   } catch (error) {
     console.error('Error setting account data on chain:', error);
     return res.status(500).json({ error: error.message });
@@ -253,29 +248,20 @@ const makePayment = async (req, res) => {
     const account = await server.loadAccount(senderPublicKey);
     const transaction = new DiamSdk.TransactionBuilder(account, {
       fee: await server.fetchBaseFee(),
-      networkPassphrase: Networks.TESTNET
+      networkPassphrase: DiamSdk.Networks.TESTNET
     })
       .addOperation(
-        Operation.payment({
+        DiamSdk.Operation.payment({
           destination: receiverPublicKey,
-          asset: Asset.native(),
+          asset: DiamSdk.Asset.native(),
           amount: amount
         })
       )
       .setTimeout(30)
       .build();
-
     transaction.sign(senderKeypair);
     const result = await server.submitTransaction(transaction);
-    console.log(
-      `Payment made from ${senderPublicKey} to ${receiverPublicKey} with amount ${amount}`,
-      result
-    );
-    user.my_investments.push({
-      property: receiverPublicKey,
-      share_per: 100
-    });
-    await user();
+
     res.status(200).json({
       message: `Payment of ${amount} DIAM made to ${receiverPublicKey} successfully`
     });

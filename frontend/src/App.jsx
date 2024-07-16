@@ -14,7 +14,6 @@ function App() {
  
   return (
     <>
-      
       <BrowserRouter>
         <Navbar />
         <div className="main">

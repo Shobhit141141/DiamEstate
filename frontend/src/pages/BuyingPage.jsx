@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Carousel from "../components/Carousel";
 import { getSingleProperty } from "../apis/propertyApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { investInProperty } from "../apis/userApi";
+import { handlePayment, investInProperty } from "../apis/userApi";
 import toast from "react-hot-toast";
 
 const BuyingPage = () => {
@@ -48,9 +48,8 @@ const BuyingPage = () => {
       const tokens_left = property.no_of_tokens - tokenCount;
       console.log(tokens_left)
       await investInProperty(id, percentage , tokens_left);
+      await handlePayment(tokenCount, property.owner.public_address);
       toast.success("💰 Invested successfully");
-
-      // Reset state after successful investment
       setTokenCount(0);
       setPercentage(0);
       navigate("/"); // Redirect to the previous page

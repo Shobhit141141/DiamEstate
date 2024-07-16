@@ -24,7 +24,7 @@ const handleUserSignUp = async (req, res) => {
     console.log(keypair.publicKey)
 
     // Check for valid username
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+    if (!/^[a-zA-Z0-9_]{3,60}$/.test(username)) {
       return res.status(400).json({ error: 'Invalid username' });
     }
 
@@ -44,11 +44,12 @@ const handleUserSignUp = async (req, res) => {
       { expiresIn: '1w', issuer: 'DiamEstate' }
     );
 
-    // Seeting userId on diamante chain for associating web2 credential with web3
+    // Setting userId on diamante chain for associating web2 credential with web3
     // const setDataResp = await axios.post('/api/user/set-data', {
     //   name: 'userId',
     //   value: newUser._id
     // });
+
     // console.log(setDataResp.data);
 
     res.status(201).json({
