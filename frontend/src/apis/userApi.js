@@ -2,6 +2,8 @@ import axios from 'axios';
 import { server_url } from '../config';
 import toast from 'react-hot-toast';
 
+const public_address = localStorage.getItem('public_address');
+
 export const listProperty = async (propertyData) => {
 	const response = await axios.post(
 		`${server_url}/user/list-property`,
@@ -69,5 +71,17 @@ export const handlePayment = async (amount, receiverPublicKey) => {
 	} catch (error) {
 		console.error(error);
 		toast.error('Payment Failed. Please try again.');
+	}
+};
+
+export const getDiamAccountTransactions = async () => {
+	try {
+		const resp = await axios.get(
+			`https://diamtestnet.diamcircle.io/accounts/${public_address}/transactions`
+		);
+		return resp.data;
+	} catch (error) {
+		console.log('Error fetching transactions: ', error);
+		toast.error('Error fetching transactions');
 	}
 };
