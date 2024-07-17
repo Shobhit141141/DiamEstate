@@ -34,6 +34,9 @@ The platform will feature a user-friendly interface where properties can be list
 ### Investment
 ![invest](https://github.com/user-attachments/assets/1c8ad0e7-7217-4886-9186-c0f1011d8c72)
 
+### Transactions
+![transactions](https://github.com/user-attachments/assets/787df62c-5390-4b70-8a91-f62a116886c0)
+
 ### List your own property
 ![list](https://github.com/user-attachments/assets/87f9e3aa-ed52-48cb-8813-9c2318f0ce0a)
 
