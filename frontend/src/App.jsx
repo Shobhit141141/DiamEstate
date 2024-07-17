@@ -1,37 +1,67 @@
-import "./App.css";
-import Home from "./pages/Home";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import DetailsPage from "./pages/DetailsPage";
-import BuyingPage from "./pages/BuyingPage";
-import ListingPage from "./components/ListingPage";
-import Navbar from "./components/NavBar";
-import Properties from "./pages/Properties";
-import LoginPage from "./pages/Login";
-import DashBoard from "./pages/DashBoard";
-import {Toaster} from "react-hot-toast";
+import './App.css';
+import Home from './pages/Home';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DetailsPage from './pages/DetailsPage';
+import BuyingPage from './pages/BuyingPage';
+import ListingPage from './components/ListingPage';
+import Navbar from './components/NavBar';
+import Properties from './pages/Properties';
+import LoginPage from './pages/Login';
+import DashBoard from './pages/DashBoard';
+import { Toaster } from 'react-hot-toast';
 import SignUp from './pages/SignUp';
+import LoadingBar from 'react-top-loading-bar';
+import { useState } from 'react';
+
 function App() {
- 
-  return (
-    <>
-      <BrowserRouter>
-        <Navbar />
-        <div className="main">
-        <Toaster />
-          <Routes>
-            {/* <Route path="/" element={<Home />} /> */}
-            <Route path="/listing" element={<ListingPage />} />
-            <Route path="/buy/:id" element={<BuyingPage />} />
-            <Route path="/details/:id" element={<DetailsPage />} />
-            <Route path="/" element={<Properties />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<DashBoard />} />
-            <Route path='/signup' element={<SignUp />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </>
-  );
+	const [progress, setProgress] = useState(0);
+	return (
+		<>
+			<BrowserRouter>
+				<LoadingBar
+					color='#3120e2'
+					height={4}
+          shadow={true}
+					progress={progress}
+					onLoaderFinished={() => setProgress(0)}
+				/>
+				<Navbar />
+				<div className='main'>
+					<Toaster />
+					<Routes>
+						<Route
+							path='/listing'
+							element={<ListingPage setProgress={setProgress} />}
+						/>
+						<Route
+							path='/buy/:id'
+							element={<BuyingPage setProgress={setProgress} />}
+						/>
+						<Route
+							path='/details/:id'
+							element={<DetailsPage setProgress={setProgress} />}
+						/>
+						<Route
+							path='/'
+							element={<Properties setProgress={setProgress} />}
+						/>
+						<Route
+							path='/login'
+							element={<LoginPage setProgress={setProgress} />}
+						/>
+						<Route
+							path='/dashboard'
+							element={<DashBoard setProgress={setProgress} />}
+						/>
+						<Route
+							path='/signup'
+							element={<SignUp setProgress={setProgress} />}
+						/>
+					</Routes>
+				</div>
+			</BrowserRouter>
+		</>
+	);
 }
 
 export default App;

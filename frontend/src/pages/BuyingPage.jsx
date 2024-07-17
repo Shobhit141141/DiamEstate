@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { handlePayment, investInProperty } from "../apis/userApi";
 import toast from "react-hot-toast";
 
-const BuyingPage = () => {
+const BuyingPage = ({setProgress}) => {
   const { id } = useParams();
   const totalPropertyPrice = 200;
   const totalTokens = 10;
@@ -19,11 +19,14 @@ const BuyingPage = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
+        setProgress(37);
         const response = await getSingleProperty(id);
         setProperty(response.data.result);
+        setProgress(100);
       } catch (error) {
         setError("Failed to fetch property details.");
         console.error(error);
+        setProgress(100);
       } finally {
         setLoading(false);
       }
@@ -45,10 +48,13 @@ const BuyingPage = () => {
     }
 
     try {
+      setProgress(40);
       const tokens_left = property.no_of_tokens - tokenCount;
       console.log(tokens_left)
       await investInProperty(id, percentage , tokens_left);
+      setProgress(60);
       await handlePayment(tokenCount, property.owner.public_address);
+      setProgress(100);
       toast.success("💰 Invested successfully");
       setTokenCount(0);
       setPercentage(0);
@@ -56,6 +62,7 @@ const BuyingPage = () => {
     } catch (error) {
       toast.error("Investment failed");
       console.error(error);
+      setProgress(100);
       setError(error);
     }
   };

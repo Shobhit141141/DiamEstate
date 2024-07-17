@@ -6,7 +6,7 @@ import { getDiamAccountTransactions, getUserDetails } from '../apis/userApi';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-function DashBoard() {
+function DashBoard({setProgress}) {
 	const [activeTab, setActiveTab] = useState('My Investments');
 	const [user, setUser] = useState([]);
 	const [transactions, setTransactions] = useState([]);
@@ -28,13 +28,16 @@ function DashBoard() {
 	useEffect(() => {
 		const getUser = async () => {
 			try {
+        setProgress(45);
 				setLoading(true);
 				const response = await getUserDetails();
+        setProgress(100);
 				setUser(response.data.result);
 				setLoading(false);
 			} catch (error) {
-				console.error('Error fetching user details:', error);
+        console.error('Error fetching user details:', error);
 				setLoading(false);
+        setProgress(100);
 			}
 		};
 		getUser();

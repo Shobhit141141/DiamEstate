@@ -5,7 +5,7 @@ import { BiCopy } from 'react-icons/bi';
 import toast from 'react-hot-toast';
 import { server_url } from '../config';
 
-function SignUp() {
+function SignUp({setProgress}) {
 	const [searchQuery] = useSearchParams();
 	const public_address = searchQuery.get('public_address');
 	const [username, setUsername] = useState(public_address || '');
@@ -60,6 +60,7 @@ function SignUp() {
 		console.log('Signing up with username:', username);
 
 		try {
+			setProgress(26);
 			const resp = await axios.post(`${server_url}/auth/signup`, {
 				username,
 				location,
@@ -67,12 +68,14 @@ function SignUp() {
 			setSecretKey(resp.data.result.secret_key);
 			localStorage.setItem('access_token', resp.data.access_token);
 			localStorage.setItem('public_address', resp.data.result.public_address);
+			setProgress(60);
 			setShowSecretKey(true);
 			toast.success('Welcome to DiamEstate 🎉');
 			console.log(resp.data);
 		} catch (error) {
 			console.log(error);
 			toast.error(error.response.data.error)
+			setProgress(100);
 		}
 	};
 

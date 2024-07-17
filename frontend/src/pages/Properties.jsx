@@ -4,7 +4,7 @@ import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { getAllProperty } from "../apis/propertyApi";
 import { useNavigate } from "react-router-dom";
 
-const Properties = () => {
+const Properties = ({setProgress}) => {
   const [propertyList, setPropertyList] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
@@ -15,11 +15,13 @@ const Properties = () => {
   useEffect(() => {
     const getAllProperties = async () => {
       try {
+        setProgress(60);
         if(!localStorage.getItem("access_token")){
           navigate("/login");
           return;
         }
         const response = await getAllProperty();
+        setProgress(100)
         setPropertyList(response.data.result);
         setFilteredProducts(response.data.result);
       } catch (error) {

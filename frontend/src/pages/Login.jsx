@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { server_url } from '../config';
 
-function LoginPage() {
+function LoginPage({ setProgress }) {
 	const [username, setUsername] = useState('');
 	const [secretKey, setSecretKey] = useState('');
 	const [error, setError] = useState('');
@@ -24,22 +24,26 @@ function LoginPage() {
 		setError(''); // Clear error if both fields are valid
 
 		try {
+			setProgress(30);
 			const resp = await axios.post(`${server_url}/auth/login`, {
 				username,
 				secret_key: secretKey,
 			});
+			setProgress(60);
 			localStorage.setItem('access_token', resp.data.access_token);
 			localStorage.setItem('public_address', resp.data.result.public_address);
 			navigate('/');
 			toast.success('Welcome to DiamEstate 🎉');
 		} catch (error) {
 			console.error(error);
-			toast.error(error.response.data.error)
+			toast.error(error.response.data.error);
 			setError('Login failed. Please try again.'); // Set error for failed login
+			setProgress(100);
 		}
 	};
 
 	const handleWalletConnect = async () => {
+		setProgress(40);
 		let public_address = '';
 		if (!window.diam) {
 			toast.error('Please install Diam Wallet extension.');

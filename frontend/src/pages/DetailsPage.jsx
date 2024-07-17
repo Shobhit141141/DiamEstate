@@ -7,7 +7,7 @@ import InvestorTable from '../components/InvestorsTable';
 import { server_url } from '../config';
 import toast from 'react-hot-toast';
 
-const DetailsPage = () => {
+const DetailsPage = ({setProgress}) => {
 	const { id } = useParams();
 	const [property, setProperty] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -16,13 +16,16 @@ const DetailsPage = () => {
 	useEffect(() => {
 		const fetchProperty = async () => {
 			try {
+				setProgress(37);
 				const response = await getSingleProperty(id);
+				setProgress(100);
 				setProperty(response.data.result);
 			} catch (error) {
 				setError('Failed to fetch property details.');
 				console.error(error);
 			} finally {
 				setLoading(false);
+				setProgress(100);
 			}
 		};
 
@@ -30,6 +33,7 @@ const DetailsPage = () => {
 	}, [id]);
 	const handlePurachse = async (req, res) => {
 		try {
+			setProgress(30);
 			const resp = await axios.post(
 				`${server_url}/user/make-payment`,
 				{
@@ -43,10 +47,12 @@ const DetailsPage = () => {
 				}
 			);
 			console.log(resp.data);
+			setProgress(100);
 			toast.success('Payment Successful');
 		} catch (error) {
 			console.error(error);
 			toast.error('Payment Failed. Please try again.');
+			setProgress(100);
 		}
 	};
 
