@@ -6,7 +6,8 @@ const {
   fundAccountWithTestDiam,
   setAccountDataOnChain,
   createTokenAssetOnChain,
-  makePayment
+  makePayment,
+  sendAssetToken
 } = require('../controllers/userController');
 const userRouter = express.Router();
 
@@ -18,5 +19,6 @@ userRouter
   .post('/set-data', setAccountDataOnChain)
   .post('/create-asset', createTokenAssetOnChain)
   .post('/make-payment', makePayment)
+  .post('/send-token', sendAssetToken);
 
 module.exports = userRouter;

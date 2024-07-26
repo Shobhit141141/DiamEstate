@@ -15,19 +15,44 @@ const listProperty = async (req, res) => {
       no_of_tokens,
       location
     } = req.body;
-    console.log(title, desc, total_price, location, token_name, no_of_tokens);
+
+    if (
+      !title ||
+      !desc ||
+      !total_price ||
+      !images ||
+      !token_name ||
+      !no_of_tokens ||
+      !location
+    ) {
+      return res
+        .status(400)
+        .json({ error: 'Please provide all required fields' });
+    }
 
     // Create a token asset using diamante API
-    // const newAssetResp = await axios.post('/api/user/create-asset', {
-    //   token_name,
-    //   no_of_tokens
-    // });
+    const data = {
+      token_name,
+      no_of_tokens
+    };
+    const token = req.headers.authorization;
+    const newAssetResp = await fetch(
+      'https://diam-estate-server.vercel.app/api/user/create-asset',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
+        body: JSON.stringify(data)
+      }
+    );
 
     const owner = req.userId;
     const property = new Property({
       title,
       desc,
-      location,
+      location: JSON.parse(location),
       total_price,
       images,
       owner,
@@ -53,7 +78,7 @@ const listProperty = async (req, res) => {
       .status(200)
       .json({ result: property, message: 'Property listed successfully' });
   } catch (error) {
-    console.error('Error listing new property:', error);
+    console.error('Error listing new property');
     res.status(500).json({ error: error.message });
   }
 };
@@ -86,9 +111,7 @@ const investInProperty = async (req, res) => {
   try {
     const { propId } = req.params;
     const { share_per, tokens_left } = req.body;
-    console.log(tokens_left);
-    console.log(propId, share_per);
-    const property = await Property.findById(propId);
+    const property = await Property.findById(propId).populate('owner');
     if (!property) {
       return res.status(404).json({ error: 'Property not found' });
     }
@@ -97,11 +120,34 @@ const investInProperty = async (req, res) => {
         .status(400)
         .json({ error: 'Investment exceeds available percentage.' });
     }
+
+    const user = await User.findById(req.userId);
+
+    const access_token = req.headers.authorization;
+
+    const sendTk = await fetch('https://diam-estate-server.vercel.app/api/user/send-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: access_token
+      },
+      body: JSON.stringify({
+        token_name: property.token_name,
+        no_of_tokens:
+          (property.no_of_tokens - tokens_left).toString() + '.0000000',
+        receiverSecretKey: user.secret_key,
+        senderSecretKey: property.owner.distribution_secret_key
+      })
+    });
+
+    const re = await sendTk.json();
+
+    return res.status(200).json({ data: re });
+
     property.investors.push({ investor: req.userId, share_per });
     property.percentageLeft -= share_per;
     property.available_tokens = tokens_left;
     await property.save();
-    const user = await User.findById(req.userId);
     user.my_investments.push({ property: propId, share_per });
     await user.save();
 
@@ -166,10 +212,20 @@ const setAccountDataOnChain = async (req, res) => {
 const createTokenAssetOnChain = async (req, res) => {
   try {
     const { token_name, no_of_tokens } = req.body;
+    console.log(
+      'Creating token asset on chain:',
+      token_name,
+      no_of_tokens,
+      req.headers.authorization
+    );
     const user = await User.findById(req.userId);
     const issuingKeys = DiamSdk.Keypair.fromSecret(user.secret_key);
     // Create a distributor account
     const distributorKeypair = DiamSdk.Keypair.random();
+    console.log('dist:', distributorKeypair.publicKey());
+    await axios.get(
+      `${process.env.DIAM_FAUCET_URI}?addr=${distributorKeypair.publicKey()}`
+    );
     user.distribution_address = distributorKeypair.publicKey();
     user.distribution_secret_key = distributorKeypair.secret();
     await user.save();
@@ -233,7 +289,7 @@ const createTokenAssetOnChain = async (req, res) => {
       .status(200)
       .json({ result: newAsset, message: 'Asset created successfully' });
   } catch (error) {
-    console.error('Error creating token asset on chain:', error);
+    console.error('Error creating token asset on chain:');
     return res.status(500).json({ error: error.message });
   }
 };
@@ -271,12 +327,60 @@ const makePayment = async (req, res) => {
   }
 };
 
-const sendAssetToken = async (req, res) => {};
+const sendAssetToken = async (req, res) => {
+  try {
+    console.log('Sending asset token on chain:', req.body);
+    const { receiverSecretKey, senderSecretKey, token_name, no_of_tokens } =
+      req.body;
+    const receiverKeys = DiamSdk.Keypair.fromSecret(receiverSecretKey);
+    const senderKeys = DiamSdk.Keypair.fromSecret(senderSecretKey);
+    const account = await server.loadAccount(receiverKeys.publicKey());
+    const account2 = await server.loadAccount(senderKeys.publicKey());
+    const asset = new DiamSdk.Asset(token_name, senderKeys.publicKey());
+
+    // Create trustline between receiver and sender account
+    const transaction = new DiamSdk.TransactionBuilder(account, {
+      fee: DiamSdk.BASE_FEE,
+      networkPassphrase: 'Diamante Testnet'
+    })
+      .addOperation(DiamSdk.Operation.changeTrust({ asset }))
+      .setTimeout(100)
+      .build();
+
+    transaction.sign(receiverKeys);
+    const result = await server.submitTransaction(transaction);
+
+    // Send the asset tokens to the receiver
+    const transaction2 = new DiamSdk.TransactionBuilder(account2, {
+      fee: DiamSdk.BASE_FEE,
+      networkPassphrase: 'Diamante Testnet'
+    })
+      .addOperation(
+        DiamSdk.Operation.payment({
+          destination: receiverKeys.publicKey(),
+          asset,
+          amount: no_of_tokens
+        })
+      )
+      .setTimeout(100)
+      .build();
+
+    transaction2.sign(senderKeys);
+    const result2 = await server.submitTransaction(transaction2);
+    return res
+      .status(200)
+      .json({ resut: result, message: 'Asset tokens sent successfully' });
+  } catch (error) {
+    console.error('Error sending token asset on chain:');
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   listProperty,
   getUserDetails,
   makePayment,
+  sendAssetToken,
   investInProperty,
   fundAccountWithTestDiam,
   setAccountDataOnChain,

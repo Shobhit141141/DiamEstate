@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { server_url } from '../config';
@@ -59,6 +59,9 @@ function LoginPage({ setProgress }) {
 			})
 			.catch((error) => console.error(`Error: ${error}`));
 	};
+
+	useEffect(() => setProgress(100), []);
+
 	return (
 		<div className='relative h-[100vh] w-screen flex items-center justify-center'>
 			<video
