@@ -25,7 +25,7 @@ function App() {
 					progress={progress}
 					onLoaderFinished={() => setProgress(0)}
 				/>
-				<Navbar />
+				<Navbar setProgress={setProgress}/>
 				<div className='main'>
 					<Toaster />
 					<Routes>

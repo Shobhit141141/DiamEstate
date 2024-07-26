@@ -26,7 +26,7 @@ const navbarItems = [
 	},
 ];
 
-function Navbar() {
+function Navbar({ setProgress }) {
 	const server = new Horizon.Server('https://diamtestnet.diamcircle.io');
 	const location = useLocation();
 	const [selected, setSelected] = useState('');
@@ -55,12 +55,15 @@ function Navbar() {
 
 	const handleFundAcc = async () => {
 		try {
+			setProgress(40);
 			const resp = await fundAccountWithTestDiam();
+			setProgress(100);
 			console.log(resp);
 			toast.success('Account funded successfully!');
 		} catch (error) {
 			toast.error('Failed to fund account!');
 			console.log('Failed to fund account:', error);
+			setProgress(100);
 		}
 		setBalance('Fetching...');
 	};
@@ -71,7 +74,7 @@ function Navbar() {
 
 	return (
 		<>
-			{(location.pathname !== '/login' && location.pathname !== '/signup') && (
+			{location.pathname !== '/login' && location.pathname !== '/signup' && (
 				<div className='w-screen h-[80px] flex fixed top-0 mb-[100px] items-center justify-between px-4 md:px-8 backdrop-blur z-50'>
 					<Link to='/'>
 						<div className='flex items-center'>
